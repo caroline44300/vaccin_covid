@@ -73,7 +73,6 @@ class PagesController < ApplicationController
 
     cookie_button = browser.button(class: 'nehs-cookie-button')
 
-
     cookie_button.click
 
     #check if alert exists
