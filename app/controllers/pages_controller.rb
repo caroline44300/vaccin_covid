@@ -1,5 +1,4 @@
 class PagesController < ApplicationController
-  skip_before_action :authenticate_user!, only: [ :home ]
 
   def home
     @dispo_docto, @dispo_maiia, @dispo_keldoc = dispos_sites
