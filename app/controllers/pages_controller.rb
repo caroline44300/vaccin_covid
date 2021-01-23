@@ -1,5 +1,4 @@
 class PagesController < ApplicationController
-  skip_before_action :authenticate_user!, only: [ :home ]
 
   def home
     @dispo_docto, @dispo_maiia, @dispo_keldoc = dispos_sites
@@ -9,28 +8,47 @@ class PagesController < ApplicationController
 
   def dispos_sites
     # open a browser
-    browser = Watir::Browser.new :chrome
+    browser = Watir::Browser.new :chrome, headless: true
+
+    docto_dispo = check_docto(browser)
+
+    maiia_dispo = check_maiia(browser)
+
+    keldoc_dispo = check_keldoc(browser)
+
+    browser.close
+
+    return docto_dispo, maiia_dispo, keldoc_dispo
+  end
+
+  def check_docto(browser)
     # go to doctolib site
-    browser.goto("https://www.doctolib.fr/vaccination-covid-19/44300-nantes")
+    browser.goto("https://www.doctolib.fr/vaccination-covid-19/loire-atlantique")
 
     # accept cookies
     cookie_button = browser.element(id: 'didomi-notice-agree-button')
     cookie_button.click
 
     # scroll to bottom
-    browser.scroll.to :bottom
-
-    # check if alert_no_availabilities exists
-    alert = browser.element(class: 'dl-alert').exists?
-    # availabilities
-    if alert
-      docto_dispo = "Pas de disponitilités"
-    else
-      docto_dispo = "Il y a des disponibilités"
+    10.times do
+      browser.scroll.by(0, 300)
+      sleep(0.1)
     end
 
-    #  repeat for maiia site
+    # check if there are 8 no_availabilities alerts
+    no_availabilities_alerts = browser.spans(text: '')
 
+    if no_availabilities_alerts.size == 8
+      dispo_docto = "Il n'y a pas de disponibilité ❌"
+    elsif browser.element(class: 'availabilities-slot').exists?
+        dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
+    elsif browser.element(class: 'availabilities-next-slot').exists?
+        dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
+    end
+    dispo_docto
+  end
+
+  def check_maiia(browser)
     browser.goto("https://www.maiia.com/centre-de-vaccination/44000-NANTES")
 
     cookie_button = browser.element(text: 'Accepter tous les cookies')
@@ -41,14 +59,17 @@ class PagesController < ApplicationController
     alert = browser.element(class: 'info-availability').exists?
 
     if alert
-      maiia_dispo = "Pas de disponitilités"
+      maiia_dispo = "Il n'y a pas de disponibilité ❌"
     else
-      maiia_dispo = "Il y a des disponibilités"
+      maiia_dispo = "Il y a des disponibilités ! GO GO GO 🚀"
     end
+    maiia_dispo
+  end
 
+  def check_keldoc(browser)
     # repeat for kedoc site
 
-    browser.goto("https://www.keldoc.com/vaccination-covid-19/nantes")
+    browser.goto("https://www.keldoc.com/vaccination-covid-19/loire-atlantique")
 
     cookie_button = browser.button(class: 'nehs-cookie-button')
 
@@ -59,13 +80,9 @@ class PagesController < ApplicationController
     alert = browser.div(class: 'alert').exists?
 
     if alert
-      keldoc_dispo = "Pas de disponitilités"
+      keldoc_dispo = "Il n'y a pas de disponibilité ❌"
     else
-      keldoc_dispo = "Il y a des disponibilités"
+      keldoc_dispo = "Il y a des disponibilités ! GO GO GO 🚀"
     end
-
-    browser.close
-
-    return docto_dispo, maiia_dispo, keldoc_dispo
   end
 end
