@@ -60,11 +60,13 @@ class CheckAvailabilitiesJob < ApplicationJob
     end
 
     # check if there are 8 no_availabilities alerts
-    no_availabilities_alerts = browser.spans(text: '')
+    no_availabilities_alerts = browser.elements(class: 'dl-alert')
 
     if no_availabilities_alerts.size == 8
+      puts "8 alertes"
       puts dispo_docto = "Il n'y a pas de disponibilité ❌"
     elsif browser.element(class: 'availabilities-slot').exists?
+      puts "au moins 1 slot dispo tout de suite"
       puts dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
     elsif browser.element(class: 'availabilities-next-slot').exists?
       # get the next slot buttons
@@ -83,8 +85,10 @@ class CheckAvailabilitiesJob < ApplicationJob
 
         modal_text = browser.element(class: 'dl-layout-item').text
         if modal_text.include? "Personnel soignant"
+          puts "Personnel soignant"
           puts dispo_docto = "Il n'y a pas de disponibilité ❌"
         else
+          puts "au moins 1 slot dispo plus tard"
           puts dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
         end
       end

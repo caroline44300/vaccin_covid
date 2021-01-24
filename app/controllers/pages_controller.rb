@@ -36,36 +36,39 @@ class PagesController < ApplicationController
     end
 
     # check if there are 8 no_availabilities alerts
-    no_availabilities_alerts = browser.spans(text: '')
+      no_availabilities_alerts = browser.elements(class: 'dl-alert')
 
-    if no_availabilities_alerts.size == 8
-      dispo_docto = "Il n'y a pas de disponibilité ❌"
-    elsif browser.element(class: 'availabilities-slot').exists?
-      dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
-    elsif browser.element(class: 'availabilities-next-slot').exists?
-      # dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
-      # get the next slot buttons
-      buttons = browser.elements(class: 'availabilities-next-slot')
+      if no_availabilities_alerts.size == 8
+        puts "8 alertes"
+        puts dispo_docto = "Il n'y a pas de disponibilité ❌"
+      elsif browser.element(class: 'availabilities-slot').exists?
+        puts "au moins 1 slot dispo tout de suite"
+        puts dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
+      elsif browser.element(class: 'availabilities-next-slot').exists?
+        # get the next slot buttons
+        buttons = browser.elements(class: 'availabilities-next-slot')
 
-      buttons.each do |button|
-        browser.scroll.to :top
-        browser.scroll.by(button.location.x, button.location.y-200)
-        button.double_click
+        buttons.each do |button|
+          browser.scroll.to :top
+          browser.scroll.by(button.location.x, button.location.y-200)
+          button.double_click
 
-        sleep(0.2)
+          sleep(0.2)
 
-        # click on the first available slot
-        slot = browser.element(class: 'availabilities-slot')
-        slot.click
+          # click on the first available slot
+          slot = browser.element(class: 'availabilities-slot')
+          slot.click
 
-        modal_text = browser.element(class: 'dl-layout-item').text
-        if modal_text.include? "Personnel soignant"
-          dispo_docto = "Il n'y a pas de disponibilité ❌"
-        else
-          dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
+          modal_text = browser.element(class: 'dl-layout-item').text
+          if modal_text.include? "Personnel soignant"
+            puts "Personnel soignant"
+            puts dispo_docto = "Il n'y a pas de disponibilité ❌"
+          else
+            puts "au moins 1 slot dispo plus tard"
+            puts dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
+          end
         end
       end
-    end
     dispo_docto
   end
 
