@@ -18,6 +18,31 @@ class PagesController < ApplicationController
 
     browser.close
 
+    # check type of dispo and group
+    maybe_availabilities = []
+    availabilities = []
+    sites = [
+      { name: "doctolib", dispo: docto_dispo, url: "https://www.doctolib.fr/vaccination-covid-19/loire-atlantique" },
+      { name: "maiia", dispo: maiia_dispo, url: "https://www.maiia.com/centre-de-vaccination/44000-NANTES" },
+      { name: "keldoc", dispo: keldoc_dispo, url: "https://www.keldoc.com/vaccination-covid-19/loire-atlantique" }
+    ]
+
+    sites.each do |site|
+      if site[:dispo] == "Il y a des disponibilités ! GO GO GO 🚀"
+        availabilities << site
+      elsif site[:dispo] == "Il y a peut-être des disponibilités ! Vas voir 💉"
+        maybe_availabilities << site
+      end
+    end
+
+    # send emails if necessary
+
+    if !availabilities.empty?
+      AvailabilitiesMailer.with(sites_availabilities: availabilities).there_is_availabilities_email.deliver_now
+    elsif !maybe_availabilities.empty?
+      AvailabilitiesMailer.with(sites_maybe: maybe_availabilities).there_might_be_availabilities_email.deliver_now
+    end
+
     return docto_dispo, maiia_dispo, keldoc_dispo
   end
 

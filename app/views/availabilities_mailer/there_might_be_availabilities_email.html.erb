@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Il y a peut-être de la disponibilité sur les sites suivants :</h1>
+
+    <% @sites.each do |site| %>
+      <p><strong><%= site[:name] %></strong> - <%= link_to "Voir le site", site[:url], target:"_blank" %></p>
+    <% end %>
+  </body>
+</html>
