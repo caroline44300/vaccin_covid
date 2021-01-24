@@ -62,7 +62,7 @@ class PagesController < ApplicationController
         if modal_text.include? "Personnel soignant"
           dispo_docto = "Il n'y a pas de disponibilité ❌"
         else
-          dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
+          dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
         end
       end
     end

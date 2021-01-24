@@ -21,9 +21,9 @@ class CheckAvailabilitiesJob < ApplicationJob
     maybe_availabilities = []
     availabilities = []
     sites = [
-      { name: "doctolib", dispo: docto_dispo, url: "https://www.doctolib.fr/vaccination-covid-19/loire-atlantique" },
-      { name: "maiia", dispo: maiia_dispo, url: "https://www.maiia.com/centre-de-vaccination/44000-NANTES" },
-      { name: "keldoc", dispo: keldoc_dispo, url: "https://www.keldoc.com/vaccination-covid-19/loire-atlantique" }
+      { name: "Doctolib", dispo: docto_dispo, url: "https://www.doctolib.fr/vaccination-covid-19/loire-atlantique" },
+      { name: "Maiia", dispo: maiia_dispo, url: "https://www.maiia.com/centre-de-vaccination/44000-NANTES" },
+      { name: "Keldoc", dispo: keldoc_dispo, url: "https://www.keldoc.com/vaccination-covid-19/loire-atlantique" }
     ]
 
     sites.each do |site|
@@ -67,7 +67,6 @@ class CheckAvailabilitiesJob < ApplicationJob
     elsif browser.element(class: 'availabilities-slot').exists?
       puts dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
     elsif browser.element(class: 'availabilities-next-slot').exists?
-      # dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
       # get the next slot buttons
       buttons = browser.elements(class: 'availabilities-next-slot')
 
@@ -86,7 +85,7 @@ class CheckAvailabilitiesJob < ApplicationJob
         if modal_text.include? "Personnel soignant"
           puts dispo_docto = "Il n'y a pas de disponibilité ❌"
         else
-          puts dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
+          puts dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
         end
       end
     end
