@@ -1,0 +1,14 @@
+:concurrency: 3
+:timeout: 60
+:verbose: true
+:schedule:
+  CheckAvailabilitiesJob:
+    every: '15m'   # Runs once per minute
+:queues:
+  # Queue priority:
+  # https://github.com/mperham/sidekiq/wiki/Advanced-Options
+  - default
+  - mailers
+
+
+
