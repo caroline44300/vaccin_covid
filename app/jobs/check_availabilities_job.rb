@@ -87,10 +87,17 @@ class CheckAvailabilitiesJob < ApplicationJob
         if modal_text.include? "Personnel soignant"
           puts "Personnel soignant"
           puts dispo_docto = "Il n'y a pas de disponibilité ❌"
+        elsif browser.span(text:'2nde injection vaccin COVID-19 (Pfizer-BioNTech)').present?
+          puts "2ème injection only"
+          puts dispo_docto = "Il n'y a pas de disponibilité ❌"
         else
           puts "au moins 1 slot dispo plus tard"
           puts dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
         end
+
+        break if dispo_docto == "Il y a peut-être des disponibilités ! Vas voir 💉"
+
+        browser.back
       end
     end
     dispo_docto
