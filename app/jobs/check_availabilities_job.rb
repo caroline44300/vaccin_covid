@@ -62,8 +62,8 @@ class CheckAvailabilitiesJob < ApplicationJob
     # check if there are 8 no_availabilities alerts
     no_availabilities_alerts = browser.elements(class: 'dl-alert')
 
-    if no_availabilities_alerts.size == 8
-      puts "8 alertes"
+    if no_availabilities_alerts.size == 9
+      puts "9 alertes"
       puts dispo_docto = "Il n'y a pas de disponibilité ❌"
     elsif browser.element(class: 'availabilities-slot').exists?
       puts "au moins 1 slot dispo tout de suite"
