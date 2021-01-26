@@ -34,7 +34,7 @@ class CheckAvailabilitiesJob < ApplicationJob
       end
     end
 
-    send emails if necessary
+    # send emails if necessary
 
     if !availabilities.empty?
       AvailabilitiesMailer.with(sites_availabilities: availabilities).there_is_availabilities_email.deliver_now
