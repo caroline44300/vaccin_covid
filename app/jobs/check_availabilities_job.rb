@@ -34,7 +34,7 @@ class CheckAvailabilitiesJob < ApplicationJob
       end
     end
 
-    # send emails if necessary
+    send emails if necessary
 
     if !availabilities.empty?
       AvailabilitiesMailer.with(sites_availabilities: availabilities).there_is_availabilities_email.deliver_now
@@ -77,14 +77,16 @@ class CheckAvailabilitiesJob < ApplicationJob
         browser.scroll.by(button.location.x, button.location.y-200)
         button.double_click
 
-        sleep(0.2)
+        sleep(0.5)
 
         # click on the first available slot
         slot = browser.element(class: 'availabilities-slot')
         slot.double_click
 
-        modal_text = browser.element(class: 'dl-layout-item').text
-        if modal_text.include? "Personnel soignant"
+        sleep(0.7)
+
+        if browser.element(class: 'dl-modal-transition').exists?
+          modal_text = browser.span(text: "Personnel soignant 2nde injection vaccin")
           puts "Personnel soignant"
           puts dispo_docto = "Il n'y a pas de disponibilité ❌"
         elsif browser.span(text:'2nde injection vaccin COVID-19 (Pfizer-BioNTech)').present?
@@ -132,12 +134,12 @@ class CheckAvailabilitiesJob < ApplicationJob
     sleep(0.5)
 
     #check if alert exists
-    alert = browser.div(class: 'alert').exists?
 
-    if alert
+    if browser.div(class: 'alert-secondary').exists?
       puts keldoc_dispo = "Il n'y a pas de disponibilité ❌"
     else
       puts keldoc_dispo = "Il y a des disponibilités ! GO GO GO 🚀"
     end
+    keldoc_dispo
   end
 end
