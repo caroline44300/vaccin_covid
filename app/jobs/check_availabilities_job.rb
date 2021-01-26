@@ -81,7 +81,7 @@ class CheckAvailabilitiesJob < ApplicationJob
 
         # click on the first available slot
         slot = browser.element(class: 'availabilities-slot')
-        slot.click
+        slot.double_click
 
         modal_text = browser.element(class: 'dl-layout-item').text
         if modal_text.include? "Personnel soignant"
@@ -95,9 +95,9 @@ class CheckAvailabilitiesJob < ApplicationJob
           puts dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
         end
 
-        break if dispo_docto == "Il y a peut-être des disponibilités ! Vas voir 💉"
-
         browser.back
+
+        break if dispo_docto == "Il y a peut-être des disponibilités ! Vas voir 💉"
       end
     end
     dispo_docto

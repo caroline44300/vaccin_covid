@@ -8,7 +8,7 @@ class PagesController < ApplicationController
 
   def dispos_sites
     # open a browser
-    browser = Watir::Browser.new :chrome, headless: false
+    browser = Watir::Browser.new :chrome, headless: true
 
     docto_dispo = check_docto(browser)
 
@@ -57,7 +57,7 @@ class PagesController < ApplicationController
 
         # click on the first available slot
         slot = browser.element(class: 'availabilities-slot')
-        slot.click
+        slot.double_click
 
         modal_text = browser.element(class: 'dl-layout-item').text
         if modal_text.include? "Personnel soignant"
@@ -71,9 +71,10 @@ class PagesController < ApplicationController
           puts dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
         end
 
+        browser.back
+
         break if dispo_docto == "Il y a peut-être des disponibilités ! Vas voir 💉"
 
-        browser.back
       end
     end
     dispo_docto
