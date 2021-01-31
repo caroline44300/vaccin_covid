@@ -1,14 +1,40 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<div class="home-banner">
+  <h1>Y-a-t-il de la place pour se faire vacciner ?</h1>
+  <h3>Cherchez votre département, ville ou code postal</h3>
+  <form action="" class="search-form" method='GET' data-remote='true'>
+    <div class="input-group mb-3">
+      <input type="text" required="true" class="form-control" placeholder="Département, Ville, Code Postal" aria-label="Search" aria-describedby="button-addon2" >
+    </div>
+    <div class="checkboxes">
+      <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+      <label class="form-check-label" for="flexCheckChecked">
+        Doctolib
+      </label>
+      <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+      <label class="form-check-label" for="flexCheckChecked">
+        Maiia
+      </label>
+      <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+      <label class="form-check-label" for="flexCheckChecked">
+        Keldoc
+      </label>
+    </div>
+    <button class="btn btn-outline-secondary" type="button" id="button-addon2">🔎</button>
+  </div>
+</form>
+<div class="container">
+  <div class="results">
+    <h2>Doctolib (Loire-Atlantique)</h2>
+    <p><%= @dispo_docto %></p>
+    <%= link_to "Voir le site", "https://www.doctolib.fr/vaccination-covid-19/loire-atlantique", target: "_blank"  %>
 
-<h2>Doctolib (Loire-Atlantique)</h2>
-<p><%= @dispo_docto %></p>
-<%= link_to "Voir le site", "https://www.doctolib.fr/vaccination-covid-19/loire-atlantique", target: "_blank"  %>
+    <h2>Maiia (Nantes)</h2>
+    <p><%= @dispo_maiia %></p>
+    <%= link_to "Voir le site", "https://www.maiia.com/centre-de-vaccination/44000-NANTES", target: "_blank"  %>
 
-<h2>Maiia (Nantes)</h2>
-<p><%= @dispo_maiia %></p>
-<%= link_to "Voir le site", "https://www.maiia.com/centre-de-vaccination/44000-NANTES", target: "_blank"  %>
+    <h2>Keldoc (Loire-Atlantique)</h2>
+    <p><%= @dispo_keldoc %></p>
+    <%= link_to "Voir le site", "https://www.keldoc.com/vaccination-covid-19/loire-atlantique", target: "_blank"  %>
+  </div>
+</div>
 
-<h2>Keldoc (Loire-Atlantique)</h2>
-<p><%= @dispo_keldoc %></p>
-<%= link_to "Voir le site", "https://www.keldoc.com/vaccination-covid-19/loire-atlantique", target: "_blank"  %>

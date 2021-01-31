@@ -59,47 +59,64 @@ class CheckAvailabilitiesJob < ApplicationJob
       sleep(0.1)
     end
 
-    # check if there are 8 no_availabilities alerts
+    # get the number of centers
+    centers = browser.elements(class: 'dl-search-result-calendar')
+    number_centers = centers.size
+
+    # check if there are number_centers no_availabilities alerts
     no_availabilities_alerts = browser.elements(class: 'dl-alert')
 
-    if no_availabilities_alerts.size == 9
-      puts "9 alertes"
+    if no_availabilities_alerts.size == number_centers
+      puts "all alertes"
       puts dispo_docto = "Il n'y a pas de disponibilité ❌"
-    elsif browser.element(class: 'availabilities-slot').exists?
-      puts "au moins 1 slot dispo tout de suite"
-      puts dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
-    elsif browser.element(class: 'availabilities-next-slot').exists?
-      # get the next slot buttons
-      buttons = browser.elements(class: 'availabilities-next-slot')
-
-      buttons.each do |button|
+    else
+      centers.each do |center|
+        # scroll to the center calendar
         browser.scroll.to :top
-        browser.scroll.by(button.location.x, button.location.y-200)
-        button.double_click
+        browser.scroll.by(center.location.x, center.location.y-200)
 
-        sleep(0.5)
+        # get the slot or next_button
+        slot = center.element(class: 'availabilities-slot')
+        button_next = center.element(class: 'availabilities-next-slot')
 
-        # click on the first available slot
-        slot = browser.element(class: 'availabilities-slot')
-        slot.double_click
+        # if slot, check that it's not for medical staff or 2nd injection only
+        if slot.exists?
+          slot.double_click
+          sleep(0.7)
 
-        sleep(0.7)
+          if browser.element(class: 'dl-modal-transition').exists?
+            modal_text = browser.span(text: "Personnel soignant 2nde injection vaccin")
+            puts "Personnel soignant"
+            puts dispo_docto = "Il n'y a pas de disponibilité ❌"
+          elsif browser.span(text:'2nde injection vaccin COVID-19 (Pfizer-BioNTech)').present?
+            puts "2ème injection only"
+            puts dispo_docto = "Il n'y a pas de disponibilité ❌"
+          else
+            puts "au moins 1 dispo tout de suite"
+            puts dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
+          end
+          # if next_button, click on it ad check if it's not for medical staff or 2nd injection only
+        elsif button_next.exists?
+          button.double_click
 
-        if browser.element(class: 'dl-modal-transition').exists?
-          modal_text = browser.span(text: "Personnel soignant 2nde injection vaccin")
-          puts "Personnel soignant"
-          puts dispo_docto = "Il n'y a pas de disponibilité ❌"
-        elsif browser.span(text:'2nde injection vaccin COVID-19 (Pfizer-BioNTech)').present?
-          puts "2ème injection only"
-          puts dispo_docto = "Il n'y a pas de disponibilité ❌"
-        else
-          puts "au moins 1 slot dispo plus tard"
-          puts dispo_docto = "Il y a peut-être des disponibilités ! Vas voir 💉"
+          sleep(0.5)
+
+          slot.double_click
+
+          sleep(0.7)
+
+          if browser.element(class: 'dl-modal-transition').exists?
+            modal_text = browser.span(text: "Personnel soignant 2nde injection vaccin")
+            puts "Personnel soignant"
+            puts dispo_docto = "Il n'y a pas de disponibilité ❌"
+          elsif browser.span(text:'2nde injection vaccin COVID-19 (Pfizer-BioNTech)').present?
+            puts "2ème injection only"
+            puts dispo_docto = "Il n'y a pas de disponibilité ❌"
+          else
+            puts "au moins 1 dispo plus tard"
+            puts dispo_docto = "Il y a des disponibilités ! GO GO GO 🚀"
+          end
         end
-
-        browser.back
-
-        break if dispo_docto == "Il y a peut-être des disponibilités ! Vas voir 💉"
       end
     end
     dispo_docto
