@@ -7,7 +7,7 @@ class CheckAvailabilitiesJob < ApplicationJob
 
   def dispos_sites
     # open a browser
-    browser = Watir::Browser.new :chrome, headless: true
+    browser = Watir::Browser.new :chrome, headless: false
 
     docto_dispo = check_docto(browser)
 
